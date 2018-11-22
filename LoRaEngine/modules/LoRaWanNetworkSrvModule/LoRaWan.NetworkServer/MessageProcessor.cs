@@ -237,8 +237,8 @@ namespace LoRaWan.NetworkServer
                         c2dMsg = await loraDeviceInfo.HubSender.ReceiveAsync(TimeSpan.FromMilliseconds(20));
                         byte[] bytesC2dMsg = null;
                         byte[] fport = null;
-                        //Todo revamp fctrl
-                        byte[] fctrl = new byte[1] { 32 };
+                      
+                        byte[] fctrl = new byte[1] { (int)FctrlEnum.Ack };
                         //check if we got a c2d message to be added in the ack message and prepare the message
                         if (c2dMsg != null)
                         {
@@ -250,10 +250,11 @@ namespace LoRaWan.NetworkServer
                                 //todo ronnie check abbandon logic especially in case of mqtt
                                 _ = await loraDeviceInfo.HubSender.AbandonAsync(secondC2dMsg);
                                 //set the fpending flag so the lora device will call us back for the next message
-                                fctrl = new byte[1] { 48 };
+                                fctrl = new byte[1] { (int)(FctrlEnum.Ack|FctrlEnum.FpendingOrClassB) };
                             }
 
                             bytesC2dMsg = c2dMsg.GetBytes();
+                            //default fport
                             fport = new byte[1] { 1 };
 
                             if (bytesC2dMsg != null)
@@ -317,7 +318,7 @@ namespace LoRaWan.NetworkServer
 
                                 if ((DateTime.UtcNow - startTimeProcessing) > TimeSpan.FromMilliseconds(RegionFactory.CurrentRegion.receive_delay1 * 1000 - 100))
                                 {
-                                    fctrl = new byte[1] { 32 };
+                                    fctrl = new byte[1] { (int)FctrlEnum.None };
                                     if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("RX2_DATR")))
                                     {
                                         Logger.Log(loraDeviceInfo.DevEUI, $"using standard second receive windows", Logger.LoggingLevel.Info);
@@ -357,7 +358,7 @@ namespace LoRaWan.NetworkServer
                                     }
                                 }
                                 if(requestForConfirmedResponse )
-                                    fctrl[0]+=16 ;
+                                    fctrl[0]+= (int)FctrlEnum.FpendingOrClassB ;
                                 if (macbytes != null && linkCheckCmdResponse != null)
                                     macbytes = macbytes.Concat(linkCheckCmdResponse).ToArray();
                                 LoRaPayloadData ackLoRaMessage = new LoRaPayloadData(
@@ -435,7 +436,7 @@ requestForConfirmedResponse ? MType.ConfirmedDataDown : MType.UnconfirmedDataDow
                         {
                             Byte[] devAddrCorrect = new byte[4];
                             Array.Copy(loraMessage.LoRaPayloadMessage.DevAddr.ToArray(), devAddrCorrect, 4);
-                            byte[] fctrl2 = new byte[1] { 32 };
+                            byte[] fctrl2 = new byte[1] { (int)FctrlEnum.Ack };
 
                             Array.Reverse(devAddrCorrect);
                             LoRaPayloadData macReply = new LoRaPayloadData(MType.ConfirmedDataDown,

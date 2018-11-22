@@ -11,6 +11,19 @@ using System.Text;
 
 namespace LoRaTools.LoRaMessage
 {
+
+    public enum FctrlEnum : short
+    {
+        None = 0,
+        FOptLen1 = 1,
+        FOptLen2 = 2,
+        FOptLen3 = 4,
+        FOptLen4 = 16,
+        FpendingOrClassB = 32,
+        Ack = 64,
+        ADRAckReq = 128,
+        ADR = 256
+    };
     /// <summary>
     /// the body of an Uplink (normal) message
     /// </summary>
