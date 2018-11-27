@@ -357,7 +357,8 @@ namespace LoRaWan.NetworkServer
                                     if (c2dMsg.Properties.Keys.Contains("Fport"))
                                     {
                                         int fportint= int.Parse(c2dMsg.Properties["Fport"]);
-                                        fport = BitConverter.GetBytes(fportint);
+                                        
+                                        fport[0] = BitConverter.GetBytes(fportint)[0];
                                         Logger.Log(loraDeviceInfo.DevEUI, $"Cloud to device message with a Fport of "+ fportint, Logger.LoggingLevel.Info);
 
                                     }
