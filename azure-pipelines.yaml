@@ -23,12 +23,16 @@ jobs:
   pool:
     vmImage: 'Ubuntu 16.04'
   variables:
-    buildConfiguration: Release
+
     
 
   steps:
   - bash: printenv
-    displayName: Show env variables    
+    displayName: Show env variables
+    enabled: true    
+    env:
+      CONTAINER_REGISTRY_PASSWORD: $(CONTAINER_REGISTRY_PASSWORD_SECRET)
+      AZURE_SUBSCRIPTIONID: $(AZURE_SUBSCRIPTIONID_SECRET)
 
   - script: dotnet build --configuration $(buildConfiguration) ./LoRaEngine/LoRaEngine.sln
     displayName: Build LoRa Engine    
@@ -82,10 +86,8 @@ jobs:
   - task: vsc-iot.iot-edge-build-deploy.custom-build-release-task.AzureIoTEdge@1
     displayName: 'Build and Push IoT Edge Solution'
     env:
-      #CONTAINER_REGISTRY_ADDRESS: $(CONTAINER_REGISTRY_ADDRESS)
-      CONTAINER_REGISTRY_PASSWORD: $(CONTAINER_REGISTRY_PASSWORD)
-      #CONTAINER_REGISTRY_USERNAME: $(CONTAINER_REGISTRY_USERNAME)
-      AZURE_SUBSCRIPTIONID: $(AZURE_SUBSCRIPTIONID)
+      CONTAINER_REGISTRY_PASSWORD: $(CONTAINER_REGISTRY_PASSWORD_SECRET)
+      AZURE_SUBSCRIPTIONID: $(AZURE_SUBSCRIPTIONID_SECRET)
     inputs:
       azureSubscriptionEndpoint: IntegrationTestRG
       moduleJsons: 'modules/*/module.json'
