@@ -52,6 +52,13 @@ jobs:
       testRunner: VSTest
       testResultsFiles: '**/*.trx'
   
+- job: Full CI
+  dependsOn: buildAndTest
+  condition: and(succeeded(), or(eq(variables['FULLCI'],'1'), in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/dev', 'refs/heads/fbe-dev-ci-changes')))
+  pool:
+    vmImage: 'Ubuntu 16.04'
+  
+  steps:
   - bash: |
      if [ "$BUILD_SOURCEBRANCH" = "refs/heads/fbe-dev-ci-changes" ]; then
        echo "fbe-dev-ci-changes"
@@ -70,7 +77,17 @@ jobs:
      echo "##vso[task.setvariable variable=PKT_FWD_VERSION]$IMAGE_TAG"      
      cp LoRaEngine/deployment.test.template.json LoRaEngine/deployment.template.json 
     displayName: Set Module version numbers and activate test template  
-    condition: and(succeeded(), or(eq(variables['FULLCI'],'1'), in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/dev', 'refs/heads/fbe-dev-ci-changes')))
+
+  - task: vsc-iot.iot-edge-build-deploy.custom-build-release-task.AzureIoTEdge@1
+    displayName: 'Build and Push IoT Edge Solution'
+    inputs:
+      azureSubscriptionEndpoint: IntegrationTestRG
+      moduleJsons: 'modules/*/module.json'
+      azureContainerRegistry: '{"loginServer":"$ACR_NAME.azurecr.io", "id" : "/subscriptions/$AZURE_SUBSCRIPTIONID/resourceGroups/default-weu/providers/Microsoft.ContainerRegistry/registries/$ACR_NAME"}'    
+      rootPath: ./LoRaEngine
+
+
+    
 
 
 
