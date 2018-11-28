@@ -49,7 +49,7 @@ jobs:
       testResultsFiles: '**/*.trx'
 
   - bash: |
-     IMAGE_TAG_PREFIX = ""
+     export IMAGE_TAG_PREFIX = ""
      if [ "$BUILD_SOURCEBRANCH" = "refs/heads/fbe-dev-ci-changes" ]; then
        $IMAGE_TAG_PREFIX = "-fbedev-preview"
      elif [ "$BUILD_SOURCEBRANCH" = "refs/heads/dev" ]; then
