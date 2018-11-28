@@ -1,7 +1,9 @@
 pr:
-  - master
-  - dev
-  - fbe-dev-ci-changes
+  branches:
+    include:
+      - master
+      - dev
+      - fbe-dev-ci-changes
 trigger:
   batch: true
   branches:
