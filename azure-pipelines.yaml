@@ -75,7 +75,7 @@ jobs:
      echo "##vso[task.setvariable variable=PKT_FWD_VERSION]$IMAGE_TAG"      
      cp LoRaEngine/deployment.test.template.json LoRaEngine/deployment.template.json 
     displayName: Set Module version numbers and activate test template 2
-    enabled: false
+    enabled: true
     condition: and(succeeded(), in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/dev', 'refs/heads/fbe-dev-ci-changes'))
 
 
