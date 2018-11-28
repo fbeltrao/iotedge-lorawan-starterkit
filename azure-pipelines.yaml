@@ -63,13 +63,13 @@ jobs:
   - bash: |
      if [ "$BUILD_SOURCEBRANCH" = "refs/heads/fbe-dev-ci-changes" ]; then
        echo "fbe-dev-ci-changes"
-       IMAGE_TAG="-fbedev-preview"
+       IMAGE_TAG="fbedev-preview"
      elif [ "$BUILD_SOURCEBRANCH" = "refs/heads/dev" ]; then
        echo "dev"
-       IMAGE_TAG="-preview"
+       IMAGE_TAG="preview"
      elif [ "$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER" != "" ]; then
        echo "pull request"
-       IMAGE_TAG="-pr-$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER"
+       IMAGE_TAG="pr-$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER"
      fi
      echo "Using image tag prefix $IMAGE_TAG"
      IMAGE_TAG="$IMAGE_TAG$BUILD_BUILDID"
