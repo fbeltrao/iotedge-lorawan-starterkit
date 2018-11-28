@@ -1,13 +1,13 @@
+pr:
+  - master
+  - dev
+  - fbe-dev-ci-changes
 trigger:
   batch: true
   branches:
     include:
       - dev
       - master
-  pr:
-  - master
-  - dev
-  - fbe-dev-ci-changes
   
 jobs:
 - job: buildAndTest
