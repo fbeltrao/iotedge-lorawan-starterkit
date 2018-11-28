@@ -22,10 +22,7 @@ jobs:
   displayName: Build and Test
   continueOnError: false
   pool:
-    vmImage: 'Ubuntu 16.04'
-  variables:
-
-    
+    vmImage: 'Ubuntu 16.04'   
 
   steps:
   - bash: printenv
