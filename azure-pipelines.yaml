@@ -46,7 +46,7 @@ jobs:
     enabled: false
 
   - task: PublishTestResults@2
-    displayName: 'Publish unit test results 2'
+    displayName: 'Publish unit test results'
     enabled: false
     inputs:
       testRunner: VSTest
