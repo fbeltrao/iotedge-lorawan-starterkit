@@ -53,15 +53,6 @@ jobs:
       testResultsFiles: '**/*.trx'
   
   - bash: |
-     IMAGE_TAG="$IMAGE_TAG_PREFIX$BUILD_BUILDID"
-     echo "Using image tag $IMAGE_TAG"
-     echo "##vso[task.setvariable variable=NET_SRV_VERSION]$IMAGE_TAG"
-     echo "##vso[task.setvariable variable=PKT_FWD_VERSION]$IMAGE_TAG"  
-     cp LoRaEngine/deployment.test.template.json LoRaEngine/deployment.template.json 
-    displayName: 'Set Module version numbers and activate test template'
-
-
-  - bash: |
      if [ "$BUILD_SOURCEBRANCH" = "refs/heads/fbe-dev-ci-changes" ]; then
        echo "fbe-dev-ci-changes"
        IMAGE_TAG="-fbedev-preview"
@@ -78,9 +69,8 @@ jobs:
      echo "##vso[task.setvariable variable=NET_SRV_VERSION]$IMAGE_TAG"
      echo "##vso[task.setvariable variable=PKT_FWD_VERSION]$IMAGE_TAG"      
      cp LoRaEngine/deployment.test.template.json LoRaEngine/deployment.template.json 
-    displayName: Set Module version numbers and activate test template 2
-    enabled: true
-    condition: and(succeeded(), in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/dev', 'refs/heads/fbe-dev-ci-changes'))
+    displayName: Set Module version numbers and activate test template  
+    condition: and(succeeded(), or(variables['FULLCI'] eq '1', in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/dev', 'refs/heads/fbe-dev-ci-changes')))
 
 
 
