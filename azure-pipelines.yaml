@@ -81,6 +81,8 @@ jobs:
      cp LoRaEngine/deployment.test.template.json LoRaEngine/deployment.template.json 
     displayName: Set Module version numbers and activate test template  
 
+  - bash: "docker login -p $CONTAINER_REGISTRY_PASSWORD -u $ACR_NAME $CONTAINER_REGISTRY_ADDRESS"
+
   - task: vsc-iot.iot-edge-build-deploy.custom-build-release-task.AzureIoTEdge@1
     displayName: 'Build and Push IoT Edge Solution'
     env:
