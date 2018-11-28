@@ -1,0 +1,38 @@
+trigger:
+  batch: true
+  branches:
+    include:
+      - dev
+      - master
+  pr:
+  - master
+  - dev
+  - fbe-dev-ci-changes
+  
+jobs:
+- job: buildAndTest
+  displayName: Build and Test
+  continueOnError: false
+  pool:
+    vmImage: 'Ubuntu 16.04'
+  variables:
+    buildConfiguration: Release
+
+  steps:
+  - script: dotnet build --configuration $(buildConfiguration) ./LoRaEngine/LoRaEngine.sln
+    displayName: Build LoRa Engine
+
+  - script: dotnet build --configuration $(buildConfiguration) ./LoRaEngine/modules/LoRaSimulator/LoRaSimulator.sln
+    displayName: Build LoRa Simulator
+
+  - script: |
+      mkdir $(Build.SourcesDirectory)\results
+      dotnet test --logger trx ./LoRaEngine/test/LoRaWanNetworkServer.Test/*.csproj
+      dotnet test --logger trx ./LoRaEngine/modules/LoRaWanNetworkSrvModule/LoRaToolsTest/*.csproj
+    displayName: Run unit test
+
+  - task: PublishTestResults@2
+    displayName: 'Publish unit test results'
+    inputs:
+      testRunner: VSTest
+      testResultsFiles: '**/*.trx'
