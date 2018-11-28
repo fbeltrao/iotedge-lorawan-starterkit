@@ -249,7 +249,9 @@ namespace LoRaWan.NetworkServer
                                 //todo ronnie check abbandon logic especially in case of mqtt
                                 _ = await loraDeviceInfo.HubSender.AbandonAsync(secondC2dMsg);
                                 //set the fpending flag so the lora device will call us back for the next message
-                                fctrl = new byte[1] { (int)(FctrlEnum.Ack|FctrlEnum.FpendingOrClassB) };
+                                fctrl[0]+= (int)FctrlEnum.FpendingOrClassB ;
+                                Logger.Log(loraDeviceInfo.DevEUI, $"Additional C2D messages waiting, setting FPending to 1", Logger.LoggingLevel.Info);
+
                             }
 
                             bytesC2dMsg = c2dMsg.GetBytes();
@@ -363,8 +365,10 @@ namespace LoRaWan.NetworkServer
 
                                     }
                                 }
-                                if(requestForConfirmedResponse )
-                                    fctrl[0]+= (int)FctrlEnum.FpendingOrClassB ;
+                                if (requestForConfirmedResponse )
+                                {
+                                    fctrl[0] += (int)FctrlEnum.FpendingOrClassB;
+                                }
                                 if (macbytes != null && linkCheckCmdResponse != null)
                                     macbytes = macbytes.Concat(linkCheckCmdResponse).ToArray();
                                 LoRaPayloadData ackLoRaMessage = new LoRaPayloadData(
@@ -417,6 +421,11 @@ namespace LoRaWan.NetworkServer
                                 if (c2dMsg != null)
                                 {
                                     _ = await loraDeviceInfo.HubSender.AbandonAsync(c2dMsg);
+                                }
+                                else
+                                {
+                                    //in case this is for sure a confirmed data down
+                                    fctrl[0] += (int)FctrlEnum.Ack;
                                 }
                                 Logger.Log(loraDeviceInfo.DevEUI, $"too late for down message, sending only ACK to gateway", Logger.LoggingLevel.Info);
                                 _ = loraDeviceInfo.HubSender.UpdateFcntAsync(loraDeviceInfo.FCntUp, null);
