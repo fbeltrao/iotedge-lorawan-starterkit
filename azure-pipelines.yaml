@@ -64,16 +64,16 @@ jobs:
   - bash: |
      if [ "$BUILD_SOURCEBRANCH" = "refs/heads/fbe-dev-ci-changes" ]; then
        echo "fbe-dev-ci-changes"
-       IMAGE_TAG_PREFIX = "-fbedev-preview"
+       IMAGE_TAG="-fbedev-preview"
      elif [ "$BUILD_SOURCEBRANCH" = "refs/heads/dev" ]; then
        echo "dev"
-       IMAGE_TAG_PREFIX = "-preview"
+       IMAGE_TAG="-preview"
      elif [ "$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER" != "" ]; then
        echo "pull request"
-       IMAGE_TAG_PREFIX = "-pr-$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER"
+       IMAGE_TAG="-pr-$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER"
      fi
-     echo "Using image tag prefix $IMAGE_TAG_PREFIX"
-     IMAGE_TAG="$IMAGE_TAG_PREFIX$BUILD_BUILDID"
+     echo "Using image tag prefix $IMAGE_TAG"
+     IMAGE_TAG="$IMAGE_TAG$BUILD_BUILDID"
      echo "Using image tag $IMAGE_TAG"
      echo "##vso[task.setvariable variable=NET_SRV_VERSION]$IMAGE_TAG"
      echo "##vso[task.setvariable variable=PKT_FWD_VERSION]$IMAGE_TAG"      
