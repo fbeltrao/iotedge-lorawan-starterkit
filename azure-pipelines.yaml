@@ -53,7 +53,7 @@ jobs:
       testResultsFiles: '**/*.trx'
   
 - job: Full_CI
-  name: Full CI (push images to CI devices and run tests)
+  displayName: Full CI (push images to CI devices and run tests)
   dependsOn: Build_And_Test
   condition: and(succeeded(), or(eq(variables['FULLCI'],'1'), in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/dev', 'refs/heads/fbe-dev-ci-changes')))
   pool:
