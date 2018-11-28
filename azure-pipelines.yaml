@@ -17,7 +17,7 @@ trigger:
       - master
 
 jobs:
-- job: buildAndTest
+- job: Build_And_Test
   displayName: Build and Test
   continueOnError: false
   pool:
@@ -52,8 +52,8 @@ jobs:
       testRunner: VSTest
       testResultsFiles: '**/*.trx'
   
-- job: Full CI
-  dependsOn: buildAndTest
+- job: Full_CI
+  dependsOn: Build_And_Test
   condition: and(succeeded(), or(eq(variables['FULLCI'],'1'), in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/dev', 'refs/heads/fbe-dev-ci-changes')))
   pool:
     vmImage: 'Ubuntu 16.04'
