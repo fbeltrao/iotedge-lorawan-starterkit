@@ -15,7 +15,7 @@ trigger:
     include:
       - dev
       - master
-  
+
 jobs:
 - job: buildAndTest
   displayName: Build and Test
@@ -53,13 +53,12 @@ jobs:
       testResultsFiles: '**/*.trx'
 
   - bash: |
-     export IMAGE_TAG_PREFIX=''
      if [ "$BUILD_SOURCEBRANCH" = "refs/heads/fbe-dev-ci-changes" ]; then
-       $IMAGE_TAG_PREFIX = "-fbedev-preview"
+       IMAGE_TAG_PREFIX = "-fbedev-preview"
      elif [ "$BUILD_SOURCEBRANCH" = "refs/heads/dev" ]; then
-       $IMAGE_TAG_PREFIX = "-preview"
+       IMAGE_TAG_PREFIX = "-preview"
      elif [ "$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER" != "" ]; then
-       $IMAGE_TAG_PREFIX = "-pr-$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER"
+       IMAGE_TAG_PREFIX = "-pr-$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER"
 
      IMAGE_TAG="$IMAGE_TAG_PREFIX$BUILD_BUILDID"
      echo "Using image tag $IMAGE_TAG"
