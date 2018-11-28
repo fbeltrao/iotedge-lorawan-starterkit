@@ -28,9 +28,11 @@ jobs:
 
   steps:
   - bash: printenv
-    displayName: Show env variables
+    displayName: Show env variables    
+
   - script: dotnet build --configuration $(buildConfiguration) ./LoRaEngine/LoRaEngine.sln
     displayName: Build LoRa Engine    
+    enabled: false
 
   - script: dotnet build --configuration $(buildConfiguration) ./LoRaEngine/modules/LoRaSimulator/LoRaSimulator.sln
     displayName: Build LoRa Simulator
@@ -41,15 +43,17 @@ jobs:
       dotnet test --logger trx ./LoRaEngine/test/LoRaWanNetworkServer.Test/*.csproj
       dotnet test --logger trx ./LoRaEngine/modules/LoRaWanNetworkSrvModule/LoRaToolsTest/*.csproj
     displayName: Run unit test
+    enabled: false
 
   - task: PublishTestResults@2
     displayName: 'Publish unit test results 2'
+    enabled: false
     inputs:
       testRunner: VSTest
       testResultsFiles: '**/*.trx'
 
   - bash: |
-     export IMAGE_TAG_PREFIX = ""
+     export IMAGE_TAG_PREFIX=''
      if [ "$BUILD_SOURCEBRANCH" = "refs/heads/fbe-dev-ci-changes" ]; then
        $IMAGE_TAG_PREFIX = "-fbedev-preview"
      elif [ "$BUILD_SOURCEBRANCH" = "refs/heads/dev" ]; then
