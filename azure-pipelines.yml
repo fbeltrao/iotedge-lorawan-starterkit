@@ -1,0 +1,22 @@
+pool:
+  vmImage: 'Ubuntu 16.04'
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+- script: |
+  dotnet build --configuration $(buildConfiguration) ./LoRaEngine/LoRaEngine.sln
+  displayName: 'dotnet build $(buildConfiguration)'
+
+- script: |
+  mkdir $(Build.SourcesDirectory)\results
+  dotnet test --logger trx ./LoRaEngine/test/LoRaWanNetworkServer.Test/*.csproj
+  dotnet test --logger trx ./LoRaEngine/modules/LoRaWanNetworkSrvModule/LoRaToolsTest/*.csproj 
+  displayName: 'Run unit testing'
+
+- task: PublishTestResults@2
+  displayName: 'Publish unit test results'
+  inputs:
+    testRunner: VSTest
+    testResultsFiles: '**/*.trx'
