@@ -27,6 +27,8 @@ jobs:
     
 
   steps:
+  - bash: printenv
+    displayName: Show env variables
   - script: dotnet build --configuration $(buildConfiguration) ./LoRaEngine/LoRaEngine.sln
     displayName: Build LoRa Engine    
 
