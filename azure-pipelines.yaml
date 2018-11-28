@@ -82,9 +82,10 @@ jobs:
   - task: vsc-iot.iot-edge-build-deploy.custom-build-release-task.AzureIoTEdge@1
     displayName: 'Build and Push IoT Edge Solution'
     env:
-      CONTAINER_REGISTRY_ADDRESS: $CONTAINER_REGISTRY_ADDRESS
-      CONTAINER_REGISTRY_PASSWORD: $CONTAINER_REGISTRY_PASSWORD
-      CONTAINER_REGISTRY_USERNAME: $CONTAINER_REGISTRY_USERNAME
+      CONTAINER_REGISTRY_ADDRESS: $(CONTAINER_REGISTRY_ADDRESS)
+      CONTAINER_REGISTRY_PASSWORD: $(CONTAINER_REGISTRY_PASSWORD)
+      CONTAINER_REGISTRY_USERNAME: $(CONTAINER_REGISTRY_USERNAME)
+      AZURE_SUBSCRIPTIONID: $(AZURE_SUBSCRIPTIONID)
     inputs:
       azureSubscriptionEndpoint: IntegrationTestRG
       moduleJsons: 'modules/*/module.json'
