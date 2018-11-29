@@ -58,10 +58,11 @@ jobs:
      echo "Found $getCILabelStatus"
      
      if [ "$getCILabelStatus" = "200" ]; then
-       echo "##vso[task.setvariable variable=FullCI]true"
+       echo "##vso[task.setvariable variable=FullCI;isOutput=true]true"
      fi
     displayName: Check for CI label build on PR
     condition: eq(variables['Build.Reason'], 'PullRequest')
+    name: checkPrWithFullCI
 
   - bash: printenv
   
