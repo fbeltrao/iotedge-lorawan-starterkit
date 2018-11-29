@@ -129,7 +129,7 @@ jobs:
   steps:
   - task: qetza.replacetokens.replacetokens-task.replacetokens@3
     displayName: 'Configure test in **/test/LoRaWan.IntegrationTest/appsettings.json'
-    env:      
+    variables:      
       INTEGRATIONTEST_LeafDeviceSerialPort: "/dev/ttyACM0"
       INTEGRATIONTEST_IoTHubEventHubConsumerGroup: "reserved_integrationtest"    
     inputs:
