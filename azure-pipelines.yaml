@@ -60,6 +60,8 @@ jobs:
   condition: and(succeeded(), or(eq(variables['FULLCI'],'1'), in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/dev', 'refs/heads/fbe-dev-ci-changes')))
   pool:
     vmImage: 'Ubuntu 16.04'
+  variables:
+    IOT_DEPLOYMENT_ID: integrationtest
   
   steps:
   - bash: |
@@ -81,18 +83,6 @@ jobs:
      cp LoRaEngine/deployment.test.template.json LoRaEngine/deployment.template.json 
     displayName: Set Module version numbers and activate test template  
 
-  - bash: "docker login -p $CONTAINER_REGISTRY_PASSWORD -u $ACR_NAME $CONTAINER_REGISTRY_ADDRESS"
-    enabled: false
-
-  - task: Docker@1
-    displayName: "Docker login on $(ACR_RG)"
-    enabled: false
-    inputs:
-      azureSubscriptionEndpoint: IntegrationTestRG
-      azureContainerRegistry: $ACR_RG
-      command: login
-
-
   - task: vsc-iot.iot-edge-build-deploy.custom-build-release-task.AzureIoTEdge@1
     displayName: 'Build and Push IoT Edge Solution'
     env:
@@ -101,12 +91,31 @@ jobs:
       azureSubscriptionEndpoint: IntegrationTestRG
       moduleJsons: 'modules/*/module.json'
       containerregistrytype: 'Azure Container Registry'
-      #azureContainerRegistry: $(ACR_NAME)
       azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_ADDRESS)", "id" : "/subscriptions/$(AZURE_SUBSCRIPTIONID)/resourceGroups/$(ACR_RG)/providers/Microsoft.ContainerRegistry/registries/$(ACR_NAME)"}'
       rootPath: ./LoRaEngine
 
+  - task: vsc-iot.iot-edge-build-deploy.custom-build-release-task.AzureIoTEdge@1
+    displayName: 'Azure IoT Edge - Deploy to integration test device'
+    inputs:
+      action: 'Deploy to IoT Edge devices'
+      azureSubscription: IntegrationTestRG
+      iothubname: '$(INTEGRATIONTEST_IOTHUB_NAME)'
+      deploymentid: '$(IOT_DEPLOYMENT_ID)'
+      deviceOption: 'Single Device'
+      deviceId: '$(INTEGRATIONTEST_LeafDeviceGatewayID)'
+      rootPath: ./LoRaEngine
 
-    
+  - task: AzureCLI@1
+    displayName: 'Waiting deployment $(IOT_DEPLOYMENT_ID) to be ready at $(INTEGRATIONTEST_LeafDeviceGatewayID)...'
+    inputs:
+      azureSubscription: IntegrationTestRG
+      timeoutInMinutes: 30
+      scriptLocation: inlineScript
+      inlineScript: |
+        az extension add --name azure-cli-iot-ext     
+        until `az iot edge deployment show-metric --deployment-id $(IOT_DEPLOYMENT_ID) --metric-id reportedSuccessfulCount  --hub-name $(INTEGRATIONTEST_IOTHUBNAME)|grep -q $(INTEGRATIONTEST_LeafDeviceGatewayID)`; do sleep 10 && echo wait; done
+
+      
 
 
 
