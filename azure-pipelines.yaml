@@ -53,9 +53,11 @@ jobs:
       testRunner: VSTest
       testResultsFiles: '**/*.trx'
   - bash: |
+     echo "Looking for label at https://api.github.com/repos/$BUILD_REPOSITORY_ID/labels/fullci"
      getCILabelStatus=$(curl -s --head -w %{http_code} "https://api.github.com/repos/$BUILD_REPOSITORY_ID/labels/fullci" -o /dev/null)
-     if $getCILabelStatus = "200" 
-     then
+     echo "Found $getCILabelStatus"
+     
+     if [ "$getCILabelStatus" = "200" ]; then
        echo "##vso[task.setvariable variable=FullCI]true"
      fi
     displayName: Check for CI label build on PR
