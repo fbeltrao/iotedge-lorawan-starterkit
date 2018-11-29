@@ -143,6 +143,17 @@ jobs:
 
   - task: DotNetCoreCLI@2
     displayName: 'Run integration test'
+    enabled: false
     inputs:
       command: test
       projects: '**/test/LoRaWan.IntegrationTest/LoRaWan.IntegrationTest.csproj'
+
+  - task: VSTest@2
+    displayName: 'Run integration test'
+    inputs:
+      testAssemblyVer2: '**/test/LoRaWan.IntegrationTest/**/*test*.dll'
+      runTestsInIsolation: true
+      codeCoverageEnabled: true
+      rerunFailedTests: true
+      rerunFailedThreshold: 30
+      rerunMaxAttempts: 3
