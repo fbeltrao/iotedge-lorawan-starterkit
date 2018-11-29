@@ -1,4 +1,4 @@
-name: $(TeamProject)_$(BuildDefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+name: $(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 variables:
   DEV_IMAGE_TAG: preview
   FBE_DEV_CI_CHANGES_IMAGE_TAG: fbedevpreview
@@ -22,7 +22,7 @@ trigger:
 
 jobs:
 - job: build_and_test
-  condition: ne(variables['RunTestsOnly'], '1') # do not run if RunTestsOnly == 1
+  condition: ne(variables['RunTestsOnly'], 'true') # do not run if RunTestsOnly == true
   displayName: Build and Test Solution
   continueOnError: false
   pool:
@@ -52,9 +52,9 @@ jobs:
       testResultsFiles: '**/*.trx'
   
 - job: full_ci_deploy
-  displayName: Build and push and deploy IoT Edge Solution
+  displayName: Build, push and deploy IoT Edge Solution
   dependsOn: build_and_test
-  condition: and(ne(variables['RunTestsOnly'], '1'), and(succeeded(), or(eq(variables['FULLCI'],'1'), in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/dev', 'refs/heads/fbe-dev-ci-changes'))))
+  condition: and(ne(variables['RunTestsOnly'], 'true'), and(succeeded(), or(eq(variables['FullCI'],'true'), in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/dev', 'refs/heads/fbe-dev-ci-changes'))))
   pool:
     vmImage: 'Ubuntu 16.04'
   variables:
@@ -88,11 +88,9 @@ jobs:
     name: setImageTag
 
   - task: vsc-iot.iot-edge-build-deploy.custom-build-release-task.AzureIoTEdge@1
-    displayName: "Build and Push version $(setImageTag.NET_SRV_VERSION), $(NET_SRV_VERSION), $NET_SRV_VERSION of IoT Edge Solution"
+    displayName: "Build and Push IoT Edge Solution"
     env:
       AZURE_SUBSCRIPTIONID: $(AZURE_SUBSCRIPTIONID_SECRET)
-      #VSTS_TOKEN: $(VSTS_TOKEN_SECRET)
-      #FACADE_AUTH_CODE: $(FACADE_AUTH_CODE_SECRET)
       CONTAINER_REGISTRY_PASSWORD: $(CONTAINER_REGISTRY_PASSWORD_SECRET)
     inputs:
       azureSubscriptionEndpoint: IntegrationTestRG
@@ -102,7 +100,7 @@ jobs:
       rootPath: ./LoRaEngine
 
   - task: vsc-iot.iot-edge-build-deploy.custom-build-release-task.AzureIoTEdge@1
-    displayName: 'Azure IoT Edge - Deploy version $(NET_SRV_VERSION) to integration test device $(INTEGRATIONTEST_LeafDeviceGatewayID)'
+    displayName: 'Azure IoT Edge - Deploy to integration test device $(INTEGRATIONTEST_LeafDeviceGatewayID)'
     inputs:
       action: 'Deploy to IoT Edge devices'
       azureSubscription: IntegrationTestRG
