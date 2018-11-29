@@ -4,7 +4,7 @@ variables:
   FBE_DEV_CI_CHANGES_IMAGE_TAG: fbedevpreview
   INTEGRATIONTEST_IoTHubEventHubConsumerGroup: reserved_integrationtest
   NET_SRV_VERSION: ""
-  PKT_FWD_VERSION: ""
+  PKT_FWD_VERSION: "1"
 
 pr:
   branches:
