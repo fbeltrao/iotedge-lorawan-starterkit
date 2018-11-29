@@ -101,8 +101,8 @@ jobs:
       azureSubscriptionEndpoint: IntegrationTestRG
       moduleJsons: 'modules/*/module.json'
       containerregistrytype: 'Azure Container Registry'
-      #azureContainerRegistry: $(ACR_NAME)
-      azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_ADDRESS)", "id" : "/subscriptions/$(AZURE_SUBSCRIPTIONID)/resourceGroups/$(ACR_RG)/providers/Microsoft.ContainerRegistry/registries/$(ACR_NAME)"}'
+      azureContainerRegistry: $(ACR_NAME)
+      #azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_ADDRESS)", "id" : "/subscriptions/$(AZURE_SUBSCRIPTIONID)/resourceGroups/$(ACR_RG)/providers/Microsoft.ContainerRegistry/registries/$(ACR_NAME)"}'
       rootPath: ./LoRaEngine
 
 
