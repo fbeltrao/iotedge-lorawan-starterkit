@@ -21,7 +21,7 @@ trigger:
     - master
 
 jobs:
-- job: build_and_test
+- job: build_and_test_1
   condition: ne(variables['RunTestsOnly'], 'true') # do not run if RunTestsOnly == true
   displayName: Build and Test Solution
   continueOnError: false
