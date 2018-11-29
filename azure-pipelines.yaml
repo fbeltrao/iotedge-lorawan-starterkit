@@ -80,6 +80,8 @@ jobs:
     
   
   steps:
+  - bash: printenv
+  
   - bash: |
      if [ "$BUILD_SOURCEBRANCH" = "refs/heads/fbe-dev-ci-changes" ]; then
        echo "fbe-dev-ci-changes"
