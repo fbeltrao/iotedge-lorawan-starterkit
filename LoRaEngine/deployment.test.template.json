@@ -129,7 +129,7 @@
               "status": "running",
               "restartPolicy": "always",
               "settings": {
-                "image": "$CONTAINER_REGISTRY_ADDRESS/azuredevopsagent:0.0.1-arm32v7",
+                "image": "$CONTAINER_REGISTRY_ADDRESS/azuredevopsagent:2.142.1-arm32v7",
                 "createOptions": {
                   "HostConfig": { 
                     "Privileged": true 

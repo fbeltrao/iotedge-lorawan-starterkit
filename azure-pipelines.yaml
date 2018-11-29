@@ -1,8 +1,4 @@
 name: $(TeamProject)_$(BuildDefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
-variables:
-  VMYVAR: $MYVAR
-  VPRID: $(System.PullRequest.PullRequestId)
-  VREQUESTEDFOREMAIL: $(Build.RequestedForEmail)
 pr:
   branches:
     include:
@@ -13,12 +9,13 @@ trigger:
   batch: true
   branches:
     include:
-      - dev
-      - master
+    - dev
+    - fbe-dev-ci-changes
+    - master
 
 jobs:
 
-- job: Build_And_Test
+- job: build_and_test
   displayName: Build and Test
   continueOnError: false
   pool:
@@ -54,9 +51,9 @@ jobs:
       testRunner: VSTest
       testResultsFiles: '**/*.trx'
   
-- job: Full_CI
+- job: full_ci_deploy
   displayName: Full CI (push images to CI devices and run tests)
-  dependsOn: Build_And_Test
+  dependsOn: build_and_test
   condition: and(succeeded(), or(eq(variables['FULLCI'],'1'), in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/dev', 'refs/heads/fbe-dev-ci-changes')))
   pool:
     vmImage: 'Ubuntu 16.04'
@@ -81,10 +78,10 @@ jobs:
      echo "##vso[task.setvariable variable=NET_SRV_VERSION]$IMAGE_TAG"
      echo "##vso[task.setvariable variable=PKT_FWD_VERSION]$IMAGE_TAG"      
      cp LoRaEngine/deployment.test.template.json LoRaEngine/deployment.template.json 
-    displayName: Set Module version numbers and activate test template  
+    displayName: Set Module version numbers and activate test template
 
   - task: vsc-iot.iot-edge-build-deploy.custom-build-release-task.AzureIoTEdge@1
-    displayName: 'Build and Push IoT Edge Solution'
+    displayName: 'Build and Push version $(IMAGE_TAG) of IoT Edge Solution'
     env:
       AZURE_SUBSCRIPTIONID: $(AZURE_SUBSCRIPTIONID_SECRET)
       VSTS_TOKEN: $(VSTS_TOKEN_SECRET)
@@ -98,7 +95,7 @@ jobs:
       rootPath: ./LoRaEngine
 
   - task: vsc-iot.iot-edge-build-deploy.custom-build-release-task.AzureIoTEdge@1
-    displayName: 'Azure IoT Edge - Deploy to integration test device'
+    displayName: 'Azure IoT Edge - Deploy version $($IMAGE_TAG) to integration test device $(INTEGRATIONTEST_LeafDeviceGatewayID)'
     inputs:
       action: 'Deploy to IoT Edge devices'
       azureSubscription: IntegrationTestRG
@@ -117,6 +114,29 @@ jobs:
       inlineScript: |
         az extension add --name azure-cli-iot-ext     
         until `az iot edge deployment show-metric --deployment-id $(IOT_DEPLOYMENT_ID) --metric-id reportedSuccessfulCount  --hub-name $(INTEGRATIONTEST_IOTHUB_NAME)|grep -q $(INTEGRATIONTEST_LeafDeviceGatewayID)`; do sleep 10 && echo wait; done
+
+- job: full_ci_test_eu
+  dependsOn: full_ci_deploy
+  pool:    
+    name: Default
+    demands: Agent.OSArchitecture -equals ARM
+  
+  steps:
+  - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+    env:
+      INTEGRATIONTEST_IoTHubConnectionString: $(INTEGRATIONTEST_IoTHubConnectionString_Secret)
+      INTEGRATIONTEST_IoTHubEventHubConnectionString: $(INTEGRATIONTEST_IoTHubEventHubConnectionString_Secret)
+      
+    displayName: 'Replace tokens in **/test/LoRaWan.IntegrationTest/appsettings.json'
+    inputs:
+      targetFiles: '**/test/LoRaWan.IntegrationTest/appsettings.json'
+
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Run integration test'
+    inputs:
+      command: test
+      projects: '**/test/LoRaWan.IntegrationTest/LoRaWan.IntegrationTest.csproj'
 
       
 
