@@ -1,5 +1,6 @@
 name: $(TeamProject)_$(BuildDefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 variables:
+  MASTER_IMAGE_TAG: ""
   DEV_IMAGE_TAG: preview
   FBE_DEV_CI_CHANGES_IMAGE_TAG: fbedevpreview
   INTEGRATIONTEST_IoTHubEventHubConsumerGroup: reserved_integrationtest
