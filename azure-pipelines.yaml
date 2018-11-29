@@ -125,7 +125,7 @@ jobs:
 - job: test_runner_eu
   displayName: 'Run tests in $(INTEGRATIONTEST_LeafDeviceGatewayID)'
   dependsOn: full_ci_deploy
-  condition: or(succeeded() or eq(variables['RunTestsOnly'], '1'))
+  condition: or(succeeded(), eq(variables['RunTestsOnly'], '1'))
   pool:    
     name: Default
     demands: Agent.OSArchitecture -equals ARM
