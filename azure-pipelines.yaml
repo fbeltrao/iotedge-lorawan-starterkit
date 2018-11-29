@@ -22,6 +22,7 @@ trigger:
 
 jobs:
 - job: build_and_test
+  condition: neq(variables['RunTestsOnly'], '1') # do not run if RunTestsOnly == 1
   displayName: Build and Test
   continueOnError: false
   pool:
@@ -60,7 +61,7 @@ jobs:
 - job: full_ci_deploy
   displayName: Full CI (push images to CI devices and run tests)
   dependsOn: build_and_test
-  condition: and(succeeded(), or(eq(variables['FULLCI'],'1'), in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/dev', 'refs/heads/fbe-dev-ci-changes')))
+  condition: and(neq(variables['RunTestsOnly'], '1'), and(succeeded(), or(eq(variables['FULLCI'],'1'), in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/dev', 'refs/heads/fbe-dev-ci-changes'))))
   pool:
     vmImage: 'Ubuntu 16.04'
   variables:
