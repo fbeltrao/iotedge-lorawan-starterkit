@@ -95,6 +95,8 @@ jobs:
 
   - task: vsc-iot.iot-edge-build-deploy.custom-build-release-task.AzureIoTEdge@1
     displayName: 'Azure IoT Edge - Deploy version $($IMAGE_TAG) to integration test device $(INTEGRATIONTEST_LeafDeviceGatewayID)'
+    env:
+      VSTS_TOKEN: $(VSTS_TOKEN_SECRET)
     inputs:
       action: 'Deploy to IoT Edge devices'
       azureSubscription: IntegrationTestRG
@@ -115,6 +117,7 @@ jobs:
         until `az iot edge deployment show-metric --deployment-id $(IOT_DEPLOYMENT_ID) --metric-id reportedSuccessfulCount  --hub-name $(INTEGRATIONTEST_IOTHUB_NAME)|grep -q $(INTEGRATIONTEST_LeafDeviceGatewayID)`; do sleep 10 && echo wait; done
 
 - job: full_ci_test_eu
+  displayName: Run tests in $(INTEGRATIONTEST_LeafDeviceGatewayID)
   dependsOn: full_ci_deploy
   pool:    
     name: Default
@@ -124,9 +127,8 @@ jobs:
   - task: qetza.replacetokens.replacetokens-task.replacetokens@3
     env:
       INTEGRATIONTEST_IoTHubConnectionString: $(INTEGRATIONTEST_IoTHubConnectionString_Secret)
-      INTEGRATIONTEST_IoTHubEventHubConnectionString: $(INTEGRATIONTEST_IoTHubEventHubConnectionString_Secret)
-      
-    displayName: 'Replace tokens in **/test/LoRaWan.IntegrationTest/appsettings.json'
+      INTEGRATIONTEST_IoTHubEventHubConnectionString: $(INTEGRATIONTEST_IoTHubEventHubConnectionString_Secret)      
+    displayName: 'Configure test in **/test/LoRaWan.IntegrationTest/appsettings.json'
     inputs:
       targetFiles: '**/test/LoRaWan.IntegrationTest/appsettings.json'
 
