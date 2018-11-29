@@ -23,7 +23,7 @@ trigger:
 jobs:
 - job: build_and_test
   condition: ne(variables['RunTestsOnly'], '1') # do not run if RunTestsOnly == 1
-  displayName: Build and Test
+  displayName: Build and Test Solution
   continueOnError: false
   pool:
     vmImage: 'Ubuntu 16.04'   
@@ -59,7 +59,7 @@ jobs:
       testResultsFiles: '**/*.trx'
   
 - job: full_ci_deploy
-  displayName: Full CI (push images to CI devices and run tests)
+  displayName: Build and push and deploy IoT Edge Solution
   dependsOn: build_and_test
   condition: and(ne(variables['RunTestsOnly'], '1'), and(succeeded(), or(eq(variables['FULLCI'],'1'), in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/dev', 'refs/heads/fbe-dev-ci-changes'))))
   pool:
@@ -124,7 +124,7 @@ jobs:
         until `az iot edge deployment show-metric --deployment-id $(IOT_DEPLOYMENT_ID) --metric-id reportedSuccessfulCount  --hub-name $(INTEGRATIONTEST_IOTHUB_NAME)|grep -q $(INTEGRATIONTEST_LeafDeviceGatewayID)`; do sleep 10 && echo wait; done
 
 - job: test_runner_eu
-  displayName: 'Run tests in $(INTEGRATIONTEST_LeafDeviceGatewayID)'
+  displayName: Run tests in device
   dependsOn: full_ci_deploy
   condition: or(succeeded(), eq(variables['RunTestsOnly'], '1'))
   pool:    
