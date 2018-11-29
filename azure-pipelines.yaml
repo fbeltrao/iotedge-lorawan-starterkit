@@ -82,24 +82,27 @@ jobs:
     displayName: Set Module version numbers and activate test template  
 
   - bash: "docker login -p $CONTAINER_REGISTRY_PASSWORD -u $ACR_NAME $CONTAINER_REGISTRY_ADDRESS"
+    enabled: false
 
   - task: Docker@1
     displayName: "Docker login on $(ACR_RG)"
+    enabled: false
     inputs:
       azureSubscriptionEndpoint: IntegrationTestRG
       azureContainerRegistry: $ACR_RG
       command: login
+
 
   - task: vsc-iot.iot-edge-build-deploy.custom-build-release-task.AzureIoTEdge@1
     displayName: 'Build and Push IoT Edge Solution'
     env:
       AZURE_SUBSCRIPTIONID: $(AZURE_SUBSCRIPTIONID_SECRET)
     inputs:
-      azureSubscriptionEndpoint: IntegrationTestRG
+      azureSubscriptionEndpoint: $(IntegrationTestRG)
       moduleJsons: 'modules/*/module.json'
       containerregistrytype: 'Azure Container Registry'
-      #azureContainerRegistry: $ACR_NAME
-      azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_ADDRESS)", "id" : "/subscriptions/$(AZURE_SUBSCRIPTIONID)/resourceGroups/$(ACR_RG)/providers/Microsoft.ContainerRegistry/registries/$(ACR_NAME)"}'
+      azureContainerRegistry: $(ACR_NAME)
+      #azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_ADDRESS)", "id" : "/subscriptions/$(AZURE_SUBSCRIPTIONID)/resourceGroups/$(ACR_RG)/providers/Microsoft.ContainerRegistry/registries/$(ACR_NAME)"}'
       rootPath: ./LoRaEngine
 
 
