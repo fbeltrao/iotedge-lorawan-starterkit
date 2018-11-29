@@ -3,7 +3,7 @@ variables:
   DEV_IMAGE_TAG: preview
   FBE_DEV_CI_CHANGES_IMAGE_TAG: fbedevpreview
   INTEGRATIONTEST_IoTHubEventHubConsumerGroup: reserved_integrationtest
-  NET_SRV_VERSION: ""
+  NET_SRV_VERSION: "1"
   PKT_FWD_VERSION: ""
 
 pr:
