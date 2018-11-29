@@ -66,13 +66,13 @@ jobs:
   - bash: |
      if [ "$BUILD_SOURCEBRANCH" = "refs/heads/fbe-dev-ci-changes" ]; then
        echo "fbe-dev-ci-changes"
-       IMAGE_TAG=$FBE_DEV_CI_CHANGES_IMAGE_TAG
+       IMAGE_TAG="$FBE_DEV_CI_CHANGES_IMAGE_TAG-"
      elif [ "$BUILD_SOURCEBRANCH" = "refs/heads/dev" ]; then
        echo "dev"
-       IMAGE_TAG=$DEV_IMAGE_TAG
+       IMAGE_TAG="$DEV_IMAGE_TAG-"
      elif [ "$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER" != "" ]; then
        echo "pull request"
-       IMAGE_TAG="pr-$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER"
+       IMAGE_TAG="pr-$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER-"
      fi
      echo "Using image tag prefix $IMAGE_TAG"
      IMAGE_TAG="$IMAGE_TAG$BUILD_BUILDID"
@@ -84,7 +84,7 @@ jobs:
     name: setImageTag
 
   - task: vsc-iot.iot-edge-build-deploy.custom-build-release-task.AzureIoTEdge@1
-    displayName: 'Build and Push version $(setImageTag.NET_SRV_VERSION) of IoT Edge Solution'
+    displayName: 'Build and Push version $(setImageTag.NET_SRV_VERSION), $(NET_SRV_VERSION), $NET_SRV_VERSION of IoT Edge Solution'
     env:
       AZURE_SUBSCRIPTIONID: $(AZURE_SUBSCRIPTIONID_SECRET)
       #VSTS_TOKEN: $(VSTS_TOKEN_SECRET)
@@ -98,7 +98,7 @@ jobs:
       rootPath: ./LoRaEngine
 
   - task: vsc-iot.iot-edge-build-deploy.custom-build-release-task.AzureIoTEdge@1
-    displayName: 'Azure IoT Edge - Deploy version $($NET_SRV_VERSION) to integration test device $(INTEGRATIONTEST_LeafDeviceGatewayID)'
+    displayName: 'Azure IoT Edge - Deploy version $(NET_SRV_VERSION) to integration test device $(INTEGRATIONTEST_LeafDeviceGatewayID)'
     inputs:
       action: 'Deploy to IoT Edge devices'
       azureSubscription: IntegrationTestRG
