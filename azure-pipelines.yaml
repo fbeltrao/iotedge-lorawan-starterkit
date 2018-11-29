@@ -29,13 +29,6 @@ jobs:
     vmImage: 'Ubuntu 16.04'   
 
   steps:
-  - bash: printenv
-    displayName: Show env variables
-    enabled: true    
-    env:
-      CONTAINER_REGISTRY_PASSWORD: $(CONTAINER_REGISTRY_PASSWORD_SECRET)
-      AZURE_SUBSCRIPTIONID: $(AZURE_SUBSCRIPTIONID_SECRET)
-
   - script: dotnet build --configuration $(buildConfiguration) ./LoRaEngine/LoRaEngine.sln
     displayName: Build LoRa Engine    
     enabled: false
@@ -75,9 +68,15 @@ jobs:
      elif [ "$BUILD_SOURCEBRANCH" = "refs/heads/dev" ]; then
        echo "dev"
        IMAGE_TAG="$DEV_IMAGE_TAG-"
+     elif [ "$BUILD_SOURCEBRANCH" = "refs/heads/master" ]; then
+       echo "master"
+       IMAGE_TAG=""
      elif [ "$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER" != "" ]; then
        echo "pull request"
        IMAGE_TAG="pr-$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER-"
+     else
+       echo "all others"
+       IMAGE_TAG="custom-$BUILD_SOURCEBRANCHNAME-"
      fi
      echo "Using image tag prefix $IMAGE_TAG"
      IMAGE_TAG="$IMAGE_TAG$BUILD_BUILDID"
@@ -126,7 +125,7 @@ jobs:
 - job: test_runner_eu
   displayName: Run tests in device
   dependsOn: full_ci_deploy
-  condition: or(succeeded(), eq(variables['RunTestsOnly'], '1'))
+  condition: or(succeeded(), eq(variables['RunTestsOnly'], 'true'))
   pool:    
     name: Default
     demands: Agent.OSArchitecture -equals ARM
