@@ -9,9 +9,9 @@ variables:
 pr:
   branches:
     include:
-      - master
-      - dev
-      - fbe-dev-ci-changes
+    - master
+    - dev
+    - fbe-dev-ci-changes
 trigger:
   batch: true
   branches:
@@ -125,7 +125,7 @@ jobs:
 - job: test_runner_eu
   displayName: 'Run tests in $(INTEGRATIONTEST_LeafDeviceGatewayID)'
   dependsOn: full_ci_deploy
-  condition: or(succeeded('full_ci_deploy') or eq(variables[TESTS_ONLY], '1'))
+  condition: or(succeeded('full_ci_deploy') or eq(variables['TESTS_ONLY'], '1'))
   pool:    
     name: Default
     demands: Agent.OSArchitecture -equals ARM
