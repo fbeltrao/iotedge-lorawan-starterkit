@@ -5,6 +5,7 @@ variables:
   INTEGRATIONTEST_IoTHubEventHubConsumerGroup: reserved_integrationtest
   NET_SRV_VERSION: ""
   PKT_FWD_VERSION: ""
+  prWithCILabel: false
 
 pr:
   branches:
@@ -57,8 +58,9 @@ jobs:
      getCILabelStatus=$(curl -s --head -w %{http_code} "https://api.github.com/repos/$BUILD_REPOSITORY_ID/labels/fullci" -o /dev/null)
      echo "Found $getCILabelStatus"
      
-     if [ "$getCILabelStatus" = "200" ]; then
-       echo "##vso[task.setvariable variable=FullCI;isOutput=true]true"
+     if [ "$getCILabelStatus" = "200" ]; then       
+       echo "##vso[task.setvariable variable=prWithCILabel]true"
+       echo "Value is set $prWithCILabel"
      fi
     displayName: Check for CI label build on PR
     condition: eq(variables['Build.Reason'], 'PullRequest')
@@ -70,9 +72,9 @@ jobs:
   displayName: Build, push and deploy IoT Edge Solution
   variables:
     IOT_DEPLOYMENT_ID: integrationtest
-    prWithCILabel: $[ dependencies.build_and_test.outputs['checkPrWithFullCI.FullCI'] ]
+    #prWithCILabel: $[ dependencies.build_and_test.outputs['checkPrWithFullCI.FullCI'] ]
   dependsOn: build_and_test
-  condition: and(ne(variables['RunTestsOnly'], 'true'), and(succeeded(), or(eq(variables['prWithCILabel'], 'true'), or(eq(variables['FullCI'],'true'), in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/dev', 'refs/heads/fbe-dev-ci-changes')))))
+  condition: and(ne(variables['RunTestsOnly'], 'true'), and(succeeded(), or(variables['prWithCILabel'], or(eq(variables['FullCI'],'true'), in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/dev', 'refs/heads/fbe-dev-ci-changes')))))
   pool:
     name: Default
     demands: Agent.OSArchitecture -equals X64
