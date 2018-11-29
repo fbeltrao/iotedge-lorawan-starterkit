@@ -125,13 +125,13 @@ jobs:
   pool:    
     name: Default
     demands: Agent.OSArchitecture -equals ARM
+  variables:      
+    INTEGRATIONTEST_LeafDeviceSerialPort: "/dev/ttyACM0"
+    INTEGRATIONTEST_IoTHubEventHubConsumerGroup: "reserved_integrationtest" 
   
   steps:
   - task: qetza.replacetokens.replacetokens-task.replacetokens@3
-    displayName: 'Configure test in **/test/LoRaWan.IntegrationTest/appsettings.json'
-    variables:      
-      INTEGRATIONTEST_LeafDeviceSerialPort: "/dev/ttyACM0"
-      INTEGRATIONTEST_IoTHubEventHubConsumerGroup: "reserved_integrationtest"    
+    displayName: 'Configure test in **/test/LoRaWan.IntegrationTest/appsettings.json'  
     inputs:
       targetFiles: '**/test/LoRaWan.IntegrationTest/appsettings.json'
 
