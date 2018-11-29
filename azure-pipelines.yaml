@@ -3,6 +3,9 @@ variables:
   DEV_IMAGE_TAG: preview
   FBE_DEV_CI_CHANGES_IMAGE_TAG: fbedevpreview
   INTEGRATIONTEST_IoTHubEventHubConsumerGroup: reserved_integrationtest
+  NET_SRV_VERSION: ""
+  PKT_FWD_VERSION: ""
+
 pr:
   branches:
     include:
@@ -119,9 +122,10 @@ jobs:
         az extension add --name azure-cli-iot-ext     
         until `az iot edge deployment show-metric --deployment-id $(IOT_DEPLOYMENT_ID) --metric-id reportedSuccessfulCount  --hub-name $(INTEGRATIONTEST_IOTHUB_NAME)|grep -q $(INTEGRATIONTEST_LeafDeviceGatewayID)`; do sleep 10 && echo wait; done
 
-- job: full_ci_test_eu
-  displayName: "Run tests in $(INTEGRATIONTEST_LeafDeviceGatewayID)"
+- job: test_runner_eu
+  displayName: 'Run tests in $(INTEGRATIONTEST_LeafDeviceGatewayID)'
   dependsOn: full_ci_deploy
+  condition: or(succeeded('full_ci_deploy') or eq(variables[TESTS_ONLY], '1'))
   pool:    
     name: Default
     demands: Agent.OSArchitecture -equals ARM
@@ -141,9 +145,3 @@ jobs:
     inputs:
       command: test
       projects: '**/test/LoRaWan.IntegrationTest/LoRaWan.IntegrationTest.csproj'
-
-      
-
-
-
-
