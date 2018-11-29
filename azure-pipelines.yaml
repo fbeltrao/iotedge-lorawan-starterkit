@@ -73,7 +73,7 @@ jobs:
     IOT_DEPLOYMENT_ID: integrationtest
     #prWithCILabel: $[ dependencies.build_and_test.outputs['checkPrWithFullCI.FullCI'] ]
   dependsOn: build_and_test
-  condition: and(ne(variables['RunTestsOnly'], 'true'), and(succeeded(), or(eq(dependencies.build_and_test.outputs['job1.checkPrCILabel.prWithCILabel'], true), or(eq(variables['FullCI'],'true'), in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/dev', 'refs/heads/fbe-dev-ci-changes')))))
+  condition: and(ne(variables['RunTestsOnly'], 'true'), and(succeeded(), or(eq($(prWithCILabel), true), or(eq(variables['FullCI'],'true'), in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/dev', 'refs/heads/fbe-dev-ci-changes')))))
   pool:
     # name: Default
     # demands: Agent.OSArchitecture -equals X64
