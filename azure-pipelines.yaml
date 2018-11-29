@@ -70,7 +70,9 @@ jobs:
   dependsOn: build_and_test
   condition: and(ne(variables['RunTestsOnly'], 'true'), and(succeeded(), or(eq(variables['FullCI'],'true'), in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/dev', 'refs/heads/fbe-dev-ci-changes'))))
   pool:
-    vmImage: 'Ubuntu 16.04'
+    name: Default
+    demands: Agent.OSArchitecture -equals X64
+    #vmImage: 'Ubuntu 16.04'
   variables:
     IOT_DEPLOYMENT_ID: integrationtest
   
