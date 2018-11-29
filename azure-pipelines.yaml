@@ -147,15 +147,5 @@ jobs:
     inputs:
       command: test
       projects: '**/test/LoRaWan.IntegrationTest/LoRaWan.IntegrationTest.csproj'
-      arguments: '-p:ParallelizeTestCollections=false'
+      arguments: '-p:ParallelizeTestCollections=false $(AdditionalIntegrationTestArguments)'
 
-  - task: VSTest@2
-    displayName: 'Run integration test'
-    enabled: false
-    inputs:
-      testAssemblyVer2: '**/test/LoRaWan.IntegrationTest/**/*test*.dll'
-      runTestsInIsolation: true
-      codeCoverageEnabled: true
-      rerunFailedTests: true
-      rerunFailedThreshold: 30
-      rerunMaxAttempts: 3
