@@ -52,7 +52,7 @@ jobs:
       testResultsFiles: '**/*.trx'
   - bash: |
      getCILabelStatus=$(curl -s --head -w %{http_code} "https://api.github.com/repos/$BUILD_REPOSITORY_ID/labels/fullci" -o /dev/null)
-     if getCILabelStatus = "200" 
+     if $getCILabelStatus = "200" 
      then
        echo "##vso[task.setvariable variable=FullCI]true"
      fi
