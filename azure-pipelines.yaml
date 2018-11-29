@@ -98,7 +98,7 @@ jobs:
     env:
       AZURE_SUBSCRIPTIONID: $(AZURE_SUBSCRIPTIONID_SECRET)
     inputs:
-      azureSubscriptionEndpoint: $(IntegrationTestRG)
+      azureSubscriptionEndpoint: IntegrationTestRG
       moduleJsons: 'modules/*/module.json'
       containerregistrytype: 'Azure Container Registry'
       azureContainerRegistry: $(ACR_NAME)
