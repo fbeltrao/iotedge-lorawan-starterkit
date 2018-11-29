@@ -81,13 +81,14 @@ jobs:
      echo "##vso[task.setvariable variable=PKT_FWD_VERSION]$IMAGE_TAG"      
      cp LoRaEngine/deployment.test.template.json LoRaEngine/deployment.template.json 
     displayName: Set Module version numbers and activate test template
+    name: setImageTag
 
   - task: vsc-iot.iot-edge-build-deploy.custom-build-release-task.AzureIoTEdge@1
-    displayName: 'Build and Push version $(NET_SRV_VERSION) of IoT Edge Solution'
+    displayName: 'Build and Push version $(setImageTag.NET_SRV_VERSION) of IoT Edge Solution'
     env:
       AZURE_SUBSCRIPTIONID: $(AZURE_SUBSCRIPTIONID_SECRET)
-      VSTS_TOKEN: $(VSTS_TOKEN_SECRET)
-      FACADE_AUTH_CODE: $(FACADE_AUTH_CODE_SECRET)
+      #VSTS_TOKEN: $(VSTS_TOKEN_SECRET)
+      #FACADE_AUTH_CODE: $(FACADE_AUTH_CODE_SECRET)
       CONTAINER_REGISTRY_PASSWORD: $(CONTAINER_REGISTRY_PASSWORD_SECRET)
     inputs:
       azureSubscriptionEndpoint: IntegrationTestRG
@@ -98,9 +99,6 @@ jobs:
 
   - task: vsc-iot.iot-edge-build-deploy.custom-build-release-task.AzureIoTEdge@1
     displayName: 'Azure IoT Edge - Deploy version $($NET_SRV_VERSION) to integration test device $(INTEGRATIONTEST_LeafDeviceGatewayID)'
-    env:
-      VSTS_TOKEN: $(VSTS_TOKEN_SECRET)
-      FACADE_AUTH_CODE: $(FACADE_AUTH_CODE_SECRET)
     inputs:
       action: 'Deploy to IoT Edge devices'
       azureSubscription: IntegrationTestRG
