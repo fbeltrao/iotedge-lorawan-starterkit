@@ -1,7 +1,8 @@
 name: $(TeamProject)_$(BuildDefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 variables:
-  DEV_IMAGE_TAG: "preview"
-  FBE_DEV_CI_CHANGES_IMAGE_TAG: "fbedevpreview"
+  DEV_IMAGE_TAG: preview
+  FBE_DEV_CI_CHANGES_IMAGE_TAG: fbedevpreview
+  INTEGRATIONTEST_IoTHubEventHubConsumerGroup: reserved_integrationtest
 pr:
   branches:
     include:
@@ -84,7 +85,7 @@ jobs:
     name: setImageTag
 
   - task: vsc-iot.iot-edge-build-deploy.custom-build-release-task.AzureIoTEdge@1
-    displayName: 'Build and Push version $(setImageTag.NET_SRV_VERSION), $(NET_SRV_VERSION), $NET_SRV_VERSION of IoT Edge Solution'
+    displayName: "Build and Push version $(setImageTag.NET_SRV_VERSION), $(NET_SRV_VERSION), $NET_SRV_VERSION of IoT Edge Solution"
     env:
       AZURE_SUBSCRIPTIONID: $(AZURE_SUBSCRIPTIONID_SECRET)
       #VSTS_TOKEN: $(VSTS_TOKEN_SECRET)
@@ -119,7 +120,7 @@ jobs:
         until `az iot edge deployment show-metric --deployment-id $(IOT_DEPLOYMENT_ID) --metric-id reportedSuccessfulCount  --hub-name $(INTEGRATIONTEST_IOTHUB_NAME)|grep -q $(INTEGRATIONTEST_LeafDeviceGatewayID)`; do sleep 10 && echo wait; done
 
 - job: full_ci_test_eu
-  displayName: Run tests in $(INTEGRATIONTEST_LeafDeviceGatewayID)
+  displayName: "Run tests in $(INTEGRATIONTEST_LeafDeviceGatewayID)"
   dependsOn: full_ci_deploy
   pool:    
     name: Default
@@ -127,10 +128,10 @@ jobs:
   
   steps:
   - task: qetza.replacetokens.replacetokens-task.replacetokens@3
-    env:
-      INTEGRATIONTEST_IoTHubConnectionString: $(INTEGRATIONTEST_IoTHubConnectionString_Secret)
-      INTEGRATIONTEST_IoTHubEventHubConnectionString: $(INTEGRATIONTEST_IoTHubEventHubConnectionString_Secret)      
     displayName: 'Configure test in **/test/LoRaWan.IntegrationTest/appsettings.json'
+    env:      
+      INTEGRATIONTEST_LeafDeviceSerialPort: "/dev/ttyACM0"
+      INTEGRATIONTEST_IoTHubEventHubConsumerGroup: "reserved_integrationtest"    
     inputs:
       targetFiles: '**/test/LoRaWan.IntegrationTest/appsettings.json'
 
