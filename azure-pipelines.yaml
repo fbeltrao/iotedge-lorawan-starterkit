@@ -28,9 +28,9 @@ jobs:
   displayName: Build and Test Solution
   continueOnError: false
   pool:
-    # name: Default
-    # demands: Agent.OSArchitecture -equals X64
-    vmImage: 'Ubuntu 16.04'   
+    name: docker
+    demands: Agent.OSArchitecture -equals X64
+    #vmImage: 'Ubuntu 16.04'   
 
   steps:
   - script: dotnet build --configuration $(buildConfiguration) ./LoRaEngine/LoRaEngine.sln
