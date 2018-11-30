@@ -159,6 +159,9 @@ jobs:
     inputs:
       targetFiles: '**/test/LoRaWan.IntegrationTest/appsettings.json'
 
+  - bash: ./LoRaEngine/test/LoRaWan.IntegrationTest/test_runner.sh
+    displayName: Execute integration tests
+
 
   - task: DotNetCoreCLI@2
     displayName: 'Run integration test'
@@ -167,4 +170,5 @@ jobs:
       command: test
       projects: '**/test/LoRaWan.IntegrationTest/LoRaWan.IntegrationTest.csproj'
       arguments: '-p:ParallelizeTestCollections=false $(AdditionalIntegrationTestArguments)'
+  
 
