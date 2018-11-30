@@ -25,9 +25,19 @@ function retry {
   done
 }
 
+echo "ABPTest starting"
 retry dotnet test --filter ABPTest --logger trx --results-directory /vsts-agent/_work/_temp
+
+echo "C2DMessageTest"
 retry dotnet test --filter C2DMessageTest --logger trx --results-directory /vsts-agent/_work/_temp
+
+echo "OTAAJoinTest"
 retry dotnet test --filter OTAAJoinTest --logger trx --results-directory /vsts-agent/_work/_temp
+
+echo "OTAATest"
 retry dotnet test --filter OTAATest --logger trx --results-directory /vsts-agent/_work/_temp
+
+echo "SensorDecodingTest"
 retry dotnet test --filter SensorDecodingTest --logger trx --results-directory /vsts-agent/_work/_temp
 
+echo "Done executing tests"

@@ -28,4 +28,4 @@ function retry {
 retry dotnet test --filter RandomTest --logger trx --results-directory /vsts-agent/_work/_temp
 retry dotnet test --filter Should_Find_String_If_Case_Matches --logger trx --results-directory /vsts-agent/_work/_temp
 retry dotnet test --filter Should_Find_String_If_Case_Does_Not_Match --logger trx --results-directory /vsts-agent/_work/_temp
-
+retry dotnet test --filter It_Never_Works --logger trx --results-directory /vsts-agent/_work/_temp

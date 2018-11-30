@@ -12,13 +12,19 @@ namespace LoRaWan.NetworkServer.Test
 
         }
 
-        // [Fact]
-        // public void It_Works_1_Out_Of_3()
-        // {
-        //     var val = random.Next(100) + 1;
-        //     Assert.True(val <= -1);
-        // }
+        [Fact]
+        public void It_Works_1_Out_Of_3()
+        {
+            var val = random.Next(100) + 1;
+            Assert.True(val <= 30);
+        }
 
+
+        [Fact]
+        public void It_Never_Works()
+        {
+            Assert.True(false);
+        }
     }
 
 }
