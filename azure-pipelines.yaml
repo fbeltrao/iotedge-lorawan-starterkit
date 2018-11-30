@@ -159,12 +159,14 @@ jobs:
     inputs:
       targetFiles: '**/test/LoRaWan.IntegrationTest/appsettings.json'
 
-  - bash: ./LoRaEngine/test/LoRaWan.IntegrationTest/test_runner.sh
-    displayName: Execute integration tests
+  - bash: ./test_runner.sh
+    displayName: Execute integration tests (with retry)
+    condition: eq(variables['AdditionalIntegrationTestArguments'], '')
+    workingDirectory: ./LoRaEngine/test/LoRaWan.IntegrationTest
 
 
   - task: DotNetCoreCLI@2
-    displayName: 'Run integration test'
+    displayName: 'Run integration test with additional arguments (no retry)'
     enabled: true
     inputs:
       command: test
