@@ -180,8 +180,9 @@ jobs:
     condition: always()
     inputs:
       testResultsFormat: 'VSTest' # Options: JUnit, NUnit, VSTest, xUnit
-      testResultsFiles: '**/*.trx' 
-
+      testResultsFiles: '**/*.trx'
+      searchFolder: '$(Common.TestResultsDirectory)'
+      testRunTitle: Integration tests
 
   - task: DotNetCoreCLI@2
     displayName: 'Run integration test with additional arguments (no retry)'
