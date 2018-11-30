@@ -1,5 +1,7 @@
 #!/bin/bash
 
+TEST_RESULTS_PATH="./TestResults"
+
 function fail {
   echo $1 >&2
   exit 1
@@ -25,19 +27,26 @@ function retry {
   done
 }
 
+
+
+if [ "$1" != "" ]; then
+    TEST_RESULTS_PATH="$1"
+fi
+
+
 echo "ABPTest starting"
-retry dotnet test --filter ABPTest --logger trx --results-directory /vsts-agent/_work/_temp
+retry dotnet test --filter ABPTest --logger trx --results-directory $TEST_RESULTS_PATH
 
 echo "C2DMessageTest"
-retry dotnet test --filter C2DMessageTest --logger trx --results-directory /vsts-agent/_work/_temp
+retry dotnet test --filter C2DMessageTest --logger trx --results-directory $TEST_RESULTS_PATH
 
 echo "OTAAJoinTest"
-retry dotnet test --filter OTAAJoinTest --logger trx --results-directory /vsts-agent/_work/_temp
+retry dotnet test --filter OTAAJoinTest --logger trx --results-directory $TEST_RESULTS_PATH
 
 echo "OTAATest"
-retry dotnet test --filter OTAATest --logger trx --results-directory /vsts-agent/_work/_temp
+retry dotnet test --filter OTAATest --logger trx --results-directory $TEST_RESULTS_PATH
 
 echo "SensorDecodingTest"
-retry dotnet test --filter SensorDecodingTest --logger trx --results-directory /vsts-agent/_work/_temp
+retry dotnet test --filter SensorDecodingTest --logger trx --results-directory $TEST_RESULTS_PATH
 
 echo "Done executing tests"

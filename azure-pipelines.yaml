@@ -48,9 +48,12 @@ jobs:
     displayName: Run unit test
     enabled: false
   
-  - bash: ./test_runner.sh
+  - bash: mkdir $(Build.SourcesDirectory)\results && ./test_runner.sh
     displayName: Execute LoRaWanNetworkServer.Test tests (with retry)
     workingDirectory: ./LoRaEngine/test/LoRaWanNetworkServer.Test
+    failOnStderr: true
+    timeoutInMinutes: 45
+
 
 
   - task: PublishTestResults@2

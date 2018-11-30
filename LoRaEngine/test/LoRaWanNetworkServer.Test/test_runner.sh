@@ -1,5 +1,7 @@
 #!/bin/bash
 
+TEST_RESULTS_PATH="./TestResults"
+
 function fail {
   echo $1 >&2
   exit 1
@@ -25,7 +27,16 @@ function retry {
   done
 }
 
-retry dotnet test --filter RandomTest --logger trx --results-directory /vsts-agent/_work/_temp
-retry dotnet test --filter Should_Find_String_If_Case_Matches --logger trx --results-directory /vsts-agent/_work/_temp
-retry dotnet test --filter Should_Find_String_If_Case_Does_Not_Match --logger trx --results-directory /vsts-agent/_work/_temp
-retry dotnet test --filter It_Never_Works --logger trx --results-directory /vsts-agent/_work/_temp
+
+
+if [ "$1" != "" ]; then
+    TEST_RESULTS_PATH="$1"
+fi
+
+
+retry dotnet test --filter RandomTest --logger trx --results-directory $TEST_RESULTS_PATH
+retry dotnet test --filter Should_Find_String_If_Case_Matches --logger trx --results-directory $TEST_RESULTS_PATH
+retry dotnet test --filter Should_Find_String_If_Case_Does_Not_Match --logger trx --results-directory $TEST_RESULTS_PATH
+retry dotnet test --filter It_Never_Works --logger trx --results-directory $TEST_RESULTS_PATH
+
+echo "Done executing tests"
