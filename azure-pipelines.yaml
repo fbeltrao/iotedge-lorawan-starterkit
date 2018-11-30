@@ -50,7 +50,7 @@ jobs:
 
   - bash: printenv
   
-  - bash: mkdir $(System.DefaultWorkingDirectory)/results && ./test_runner.sh "$(System.DefaultWorkingDirectory)/results"
+  - bash: ./test_runner.sh "$COMMON_TESTRESULTSDIRECTORY"
     displayName: Execute LoRaWanNetworkServer.Test tests (with retry)
     workingDirectory: ./LoRaEngine/test/LoRaWanNetworkServer.Test
     failOnStderr: true
@@ -61,7 +61,7 @@ jobs:
   - task: PublishTestResults@2
     condition: always()
     inputs:
-      testResultsFormat: 'xUnit' # Options: JUnit, NUnit, VSTest, xUnit
+      testResultsFormat: 'VSTest' # Options: JUnit, NUnit, VSTest, xUnit
       testResultsFiles: '**/*.trx' 
       #searchFolder: '$(System.DefaultWorkingDirectory)' # Optional
       #mergeTestResults: false # Optional
