@@ -168,6 +168,7 @@ jobs:
   - task: DotNetCoreCLI@2
     displayName: 'Run integration test with additional arguments (no retry)'
     enabled: true
+    condition: ne(variables['AdditionalIntegrationTestArguments'], '')
     inputs:
       command: test
       projects: '**/test/LoRaWan.IntegrationTest/LoRaWan.IntegrationTest.csproj'
