@@ -183,6 +183,7 @@ jobs:
       testResultsFiles: '**/*.trx'
       searchFolder: '$(Common.TestResultsDirectory)'
       testRunTitle: Integration tests
+      mergeTestResults: true
 
   - task: DotNetCoreCLI@2
     displayName: 'Run integration test with additional arguments (no retry)'
