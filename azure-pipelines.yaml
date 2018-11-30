@@ -49,6 +49,7 @@ jobs:
     enabled: false
 
   - bash: printenv
+    enabled: false
   
   - bash: ./test_runner.sh "$COMMON_TESTRESULTSDIRECTORY"
     displayName: Execute LoRaWanNetworkServer.Test tests (with retry)
@@ -56,19 +57,12 @@ jobs:
     failOnStderr: true
     timeoutInMinutes: 45
 
-  # Publish Test Results
   # Publish Test Results to Azure Pipelines/TFS
   - task: PublishTestResults@2
     condition: always()
     inputs:
       testResultsFormat: 'VSTest' # Options: JUnit, NUnit, VSTest, xUnit
       testResultsFiles: '**/*.trx' 
-      #searchFolder: '$(System.DefaultWorkingDirectory)' # Optional
-      #mergeTestResults: false # Optional
-      #testRunTitle: # Optional
-      #buildPlatform: # Optional
-      #buildConfiguration: # Optional
-      #publishRunAttachments: true # Optional
 
   - bash: |
      echo "Looking for label at https://api.github.com/repos/$BUILD_REPOSITORY_ID/issues/$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER/labels"
@@ -174,10 +168,19 @@ jobs:
     inputs:
       targetFiles: '**/test/LoRaWan.IntegrationTest/appsettings.json'
 
-  - bash: ./test_runner.sh
+  - bash: ./test_runner.sh "$COMMON_TESTRESULTSDIRECTORY"
     displayName: Execute integration tests (with retry)
     condition: eq(variables['AdditionalIntegrationTestArguments'], '')
     workingDirectory: ./LoRaEngine/test/LoRaWan.IntegrationTest
+    failOnStderr: true
+    timeoutInMinutes: 45
+
+   # Publish Test Results to Azure Pipelines/TFS
+  - task: PublishTestResults@2
+    condition: always()
+    inputs:
+      testResultsFormat: 'VSTest' # Options: JUnit, NUnit, VSTest, xUnit
+      testResultsFiles: '**/*.trx' 
 
 
   - task: DotNetCoreCLI@2
