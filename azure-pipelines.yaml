@@ -50,7 +50,7 @@ jobs:
 
   - bash: printenv
   
-  - bash: mkdir $(Build.SourcesDirectory)\results && ./test_runner.sh
+  - bash: mkdir $(System.DefaultWorkingDirectory)/results && ./test_runner.sh "$(System.DefaultWorkingDirectory)/results"
     displayName: Execute LoRaWanNetworkServer.Test tests (with retry)
     workingDirectory: ./LoRaEngine/test/LoRaWanNetworkServer.Test
     failOnStderr: true
